@@ -7,6 +7,7 @@
 //button toggles good dog status in db and toggles button name change
 
 document.addEventListener("DOMContentLoaded", e => {
+    let filter = false
     const url = "http://localhost:3000/pups/"
 
     const pullDogs = () => {
@@ -47,18 +48,16 @@ document.addEventListener("DOMContentLoaded", e => {
     }
 
     const displayDog = (dog) => {
-
-        const dogContainerDiv = document.getElementById("dog-info")
-        const dogCard = document.createElement("div")
-
-
         //dice up data
         //build html card
         //post html card.
 
+        const dogContainerDiv = document.getElementById("dog-info")
+        const dogCard = document.createElement("div")
         const name = dog.name
         const isGoodDog = dog.isGoodDog
         const image = dog.image
+
         if (isGoodDog === true) {
             dogCard.className = "dog-card"
             dogCard.id = dog.id
@@ -69,14 +68,22 @@ document.addEventListener("DOMContentLoaded", e => {
             <button class="make-bad-dog">Make Bad Dog</button>        
         `
         } else {
-            dogCard.className = "dog-card"
-            dogCard.id = dog.id
-            dogCard.innerHTML = `
-            <img src="${image}" alt = "${name}"/>
-            <h1>name: ${name}</h1>
-            <h3>Good dog status: ${isGoodDog}</h3>
-            <button class="make-good-dog">Make good Dog</button>        
-        `
+            if (filter === true) {
+                dogCard.className = "dog-card"
+                dogCard.id = dog.id
+                dogCard.innerHTML = `
+                <h1>Cannot Display dog.  Dog is not good :(</h1>        
+                `
+            } else {
+                dogCard.className = "dog-card"
+                dogCard.id = dog.id
+                dogCard.innerHTML = `
+                <img src="${image}" alt = "${name}"/>
+                <h1>name: ${name}</h1>
+                <h3>Good dog status: ${isGoodDog}</h3>
+                <button class="make-good-dog">Make good Dog</button>        
+                `
+            }
         }
 
         while (dogContainerDiv.firstChild) {
@@ -87,7 +94,7 @@ document.addEventListener("DOMContentLoaded", e => {
 
     const toggleGoodStatus = () => {
 
-        //I know.. I know... this isn't very DRY and needs to be refactored.
+        //I know.. I know... this isn't very DRY
 
         document.addEventListener("click", e => {
 
@@ -99,7 +106,7 @@ document.addEventListener("DOMContentLoaded", e => {
                 updateStatus(dogId, goodStatus)
                 fetch(url + dogId)
                     .then(res => res.json())
-                    .then(dog => displayDog(dog))
+
 
             } else if (e.target.matches("button.make-good-dog")) {
                 const button = e.target
@@ -109,15 +116,13 @@ document.addEventListener("DOMContentLoaded", e => {
                 updateStatus(dogId, goodStatus)
                 fetch(url + dogId)
                     .then(res => res.json())
-                    .then(dog => displayDog(dog))
+
             }
 
         })
     }
 
     const updateStatus = (dogId, goodStatus) => {
-        console.log(dogId, goodStatus)
-
         const packet = {
             method: "PATCH",
             headers: {
@@ -129,6 +134,29 @@ document.addEventListener("DOMContentLoaded", e => {
 
         fetch(url + dogId, packet)
             .then(res => res.json())
+            .then(dog => displayDog(dog))
+
+
+    }
+
+    const filterButton = () => {
+        e.preventDefault()
+        document.addEventListener("click", e => {
+            if (e.target.matches("button#good-dog-filter")) {
+                let buttonContainer = document.getElementById("good-dog-filter")
+
+                if (filter === false) {
+                    filter = true
+                    buttonContainer.textContent = "Filter good dogs: ON"
+                    console.log(filter)
+                } else if (filter === true) {
+                    filter = false
+                    buttonContainer.textContent = "Filter good dogs: OFF"
+                    console.log(filter)
+                }
+            }
+        })
+
 
 
     }
@@ -136,6 +164,7 @@ document.addEventListener("DOMContentLoaded", e => {
     pullDogs()
     pullSingleDog()
     toggleGoodStatus()
+    filterButton()
 
 })
 
