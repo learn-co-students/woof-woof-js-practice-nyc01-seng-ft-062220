@@ -78,6 +78,7 @@ filter.addEventListener("click", e => {
         goodBoys.forEach(obj => renderPuppy(obj))
     }else{
         filter.innerText= "Filter good dogs: OFF"
+        dogBar.innerText = ''
         puppyList.map(obj => renderPuppy(obj))
     }
     
