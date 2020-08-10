@@ -1,19 +1,17 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-
     const getDogs = async () => {
 
-        let url = "http://localhost:3000/pups/"
+        let url = "http://localhost:3000/pups/";
 
-        let response = await fetch(url)
-        let result = await response.json()
+        let response = await fetch(url);
+        let result = await response.json();
         return result;
     }
 
     const renderDogsForBar = async () => {
         let dogs = await getDogs();
-        console.log(dogs)
         dogs.forEach(dog => {
             renderDogOnBar(dog);
             generateDogFrags(dog);
@@ -21,16 +19,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+    const updateDogsForShow = async (dogId) => {
+        let url = `http://localhost:3000/pups/${dogId}`
+
+        let dogObj = {
+
+        }
+
+        const configObj = {
+            method: "PATCH",
+            header: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify()
+        }
+        let response = await fetch(url, configObj);
+        let result = await response.json(dogObj);
+
+    }
+
     const dogBarDiv = document.getElementById("dog-bar");
 
     const renderDogOnBar = (dogObj) => {
         const span = document.createElement("span");
-        span.classList.add("dog-navbar-card")
-        span.innerHTML = `${dogObj.name}`
+        span.classList.add("dog-navbar-card");
+        span.innerHTML = `${dogObj.name}`;
         dogBarDiv.appendChild(span);
     }
 
-    const dogInfoDiv = document.getElementById("dog-info");
     const dogShowFrag = new DocumentFragment();
 
     const generateDogFrags = (dogObj) => {
@@ -48,13 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
         dogShowDiv.innerHTML = `
             <img src=${dogObj.image} />
             <h2>${dogObj.name}</h2>
-            <button>${isGoodDogBtn()}</button>
+            <button id=${dogObj.id}>${isGoodDogBtn()}</button>
         `
-        // dogInfoDiv.appendChild(dogShowDiv);
     }
 
     const dogShowHandler = () => {
-
         // helper method to filter fragment docs for fun
         // alternative to CSS hidden attribute
         const filterByDogName = (target) => {
@@ -62,15 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const dogShowCard = dog.innerHTML.replace(/^\s+|\s+$/g, "");
 
                 const regex = new RegExp(target, 'gi'); 
-                // debugger;
+
                 if (dogShowCard.match(regex) && dogShowCard.match(regex)[0] === target) {
-                    console.log(dogShowCard.match(regex)[0].index);
                     return dogShowCard;
-                } else {
-                    console.log("nope");
                 }
             }
         }
+
         const dogBarDiv = document.getElementById("dog-bar");
 
         dogBarDiv.addEventListener("click", e => {
@@ -81,8 +94,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.innerHTML = dogShowCard
             }
         })
-    }
 
+        const dogInfoDiv = document.getElementById("dog-info");
+
+        // toggle button + patch
+        dogInfoDiv.addEventListener("click", e => {
+
+            console.log(e.target.id)
+        })
+
+    }
 
     renderDogsForBar();
     dogShowHandler();
