@@ -13,7 +13,10 @@ document.addEventListener("DOMContentLoaded", e => {
                     renderPupDetails(e.target.id);
                 }
             } else if(e.target.matches("#dog-info > div > button")){
-                    toggleDog(e.target.id)
+                toggleGoodBadDog(e.target.id)
+            } else if(e.target.matches("#good-dog-filter")){
+                console.log(e.target.innerText)
+                    filterOnOff();
             }
         });
     }
@@ -31,6 +34,7 @@ document.addEventListener("DOMContentLoaded", e => {
         const dogBar = document.querySelector("#dog-bar")
         const spanPup = document.createElement("SPAN")
         spanPup.setAttribute("id",`${pup.id}`)
+        spanPup.setAttribute("class",`${pup.isGoodDog}`)
         spanPup.innerText = pup.name
         dogBar.append(spanPup)
     
@@ -59,14 +63,17 @@ document.addEventListener("DOMContentLoaded", e => {
         });
     };
 
-    function toggleDog(pupId){
+    function toggleGoodBadDog(pupId){
+        const dogGoodBad = document.getElementById(`${pupId}`)
         const goodBadBtn = document.querySelector("#dog-info > div > button")
         let currentDogBehavior = goodBadBtn.innerText
         if(currentDogBehavior === "Good Dog!"){
             currentDogBehavior = "Bad Dog!"
+            dogGoodBad.setAttribute("class", false)
             
         } else {
             currentDogBehavior = "Good Dog!"
+            dogGoodBad.setAttribute("class", true)
         }
         let configObj = {
             method: "PATCH",
@@ -88,9 +95,33 @@ document.addEventListener("DOMContentLoaded", e => {
                 alert("Whoops there was an error!")
             }
         });
+        filterOnOff()
+        filterOnOff()
+        
     };
 
+    function filterOnOff(){
+        const goodDogFilter = document.querySelector("#good-dog-filter")
+        const dogBar = document.querySelector("#dog-bar")
+        if (goodDogFilter.innerText === "Filter good dogs: ON"){
+            goodDogFilter.innerText = "Filter good dogs: OFF"
+            for(i=0;i < dogBar.children.length;i++){
+                dogBar.children[i].style.display = "flex"
+            }
+        
+        } else {
+            goodDogFilter.innerText = "Filter good dogs: ON"
+            for(i=0;i < dogBar.children.length;i++){
+                if(dogBar.children[i].className === "false"){ 
+                    dogBar.children[i].style.display = "none"
+                } else {
+                    dogBar.children[i].style.display = "flex"
+                }
+            }
+        }
 
+
+    };
     //get the button id and store it to a variable
 // add an eventlistener when user clicks button, toggle good/bad
 // make a patch call when toggling button to change that puppies isGoodDog boolean
