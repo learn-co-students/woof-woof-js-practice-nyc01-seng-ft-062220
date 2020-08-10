@@ -19,24 +19,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    const updateDogsForShow = async (dogId) => {
+    const updateDogsForShow = async (dogId, isGoodDogBool) => {
         let url = `http://localhost:3000/pups/${dogId}`
-
-        let dogObj = {
-
-        }
 
         const configObj = {
             method: "PATCH",
-            header: {
+            headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify()
+            body: JSON.stringify({isGoodDog: isGoodDogBool})
         }
-        let response = await fetch(url, configObj);
-        let result = await response.json(dogObj);
-
+        const response = await fetch(url, configObj);
+        const result = await response.json();
+        //console.log(result);
     }
 
     const dogBarDiv = document.getElementById("dog-bar");
@@ -99,8 +95,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // toggle button + patch
         dogInfoDiv.addEventListener("click", e => {
+            // debugger;
+            let isGoodDogBtn = e.target;
 
-            console.log(e.target.id)
+            switch (isGoodDogBtn.textContent) {
+                case "Good Dog!":
+                    console.log("making doggo good")
+                    isGoodDogBtn.textContent = "Bad Dog!";
+                    updateDogsForShow(isGoodDogBtn.id, true);
+                    break;
+                case "Bad Dog!":
+                    console.log("badd boiii")
+                    isGoodDogBtn.textContent = "Good Dog!";
+                    updateDogsForShow(isGoodDogBtn.id, false);
+                    break;
+            }
         })
 
     }
