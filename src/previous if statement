@@ -1,0 +1,31 @@
+else if(e.target.matches("#isGoodDog")){
+                const isGoodDogButton = e.target
+                const dogSpan = document.querySelector(".dog-span")
+                let dogBoolean
+                // debugger
+                // console.log(e.target)
+                if (isGoodDogButton.innerText === "Good Dog!"){
+                    isGoodDogButton.innerText = "Bad Dog!"
+                    // debugger
+                    dogSpan.dataset.isGoodDog = "false"
+                    dogBoolean = false
+                } else if(isGoodDogButton.innerText === "Bad Dog!"){
+                    isGoodDogButton.innerText = "Good Dog!"
+                    dogSpan.dataset.isGoodDog = "true"
+                    dogBoolean = true
+                } 
+                // debugger
+                const configObj = {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({isGoodDog: dogBoolean})
+                }
+                // dogSpan.dataset.isGoodDog
+
+                fetch(dogsUrl + isGoodDogButton.dataset.id, configObj)
+                .then(response => response.json())
+                .then(isGoodDogNewValue => console.log(isGoodDogNewValue))
+            }
