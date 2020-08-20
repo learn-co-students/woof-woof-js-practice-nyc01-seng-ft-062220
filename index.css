@@ -51,3 +51,12 @@
 body {
   margin: 0;
 }
+
+.pup-card {
+  width: 200px;
+  height: 250px;
+}
+.pup-card img {
+  height: auto;
+  width: 75%;
+}
